@@ -29,6 +29,7 @@ jobs:
 
     # Step 4: Install kubectl (Windows)
     - name: Install kubectl
+      shell: powershell
       run: |
         Invoke-WebRequest -Uri https://dl.k8s.io/release/v1.29.0/bin/windows/amd64/kubectl.exe -OutFile kubectl.exe
         Move-Item -Path kubectl.exe -Destination "C:\Windows\System32\kubectl.exe" -Force
@@ -38,8 +39,9 @@ jobs:
     - name: Configure kubeconfig
       shell: powershell
       run: |
+        $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KUBECONFIG_DATA }}"))
         New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.kube"
-        Set-Content -Path "$env:USERPROFILE\.kube\config" -Value "${{ secrets.KUBECONFIG_DATA }}"
+        Set-Content -Path "$env:USERPROFILE\.kube\config" -Value $decoded
 
     # Step 6: Deploy to Kubernetes
     - name: Deploy to Kubernetes
