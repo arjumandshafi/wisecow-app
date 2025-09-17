@@ -35,12 +35,17 @@ jobs:
         Move-Item -Path kubectl.exe -Destination "C:\Windows\System32\kubectl.exe" -Force
         kubectl version --client
 
-    # Step 5: Configure kubeconfig from GitHub Secret
+    # Step 5: Configure kubeconfig from GitHub Secret (base64-decoded)
     - name: Configure kubeconfig
       shell: powershell
       run: |
-        $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String("${{ secrets.KUBECONFIG_DATA }}"))
+        # Remove any line breaks or spaces from secret
+        $b64 = "${{ secrets.KUBECONFIG_DATA }}" -replace "`r`n","" -replace "\s",""
+        # Decode base64
+        $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
+        # Create .kube directory
         New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.kube"
+        # Write decoded kubeconfig
         Set-Content -Path "$env:USERPROFILE\.kube\config" -Value $decoded
 
     # Step 6: Deploy to Kubernetes
