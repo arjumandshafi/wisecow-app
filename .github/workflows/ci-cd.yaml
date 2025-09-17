@@ -36,14 +36,14 @@ jobs:
 
     # Step 5: Configure kubeconfig from GitHub Secret
     - name: Configure kubeconfig
-      shell: pwsh
+      shell: powershell
       run: |
         New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.kube"
         Set-Content -Path "$env:USERPROFILE\.kube\config" -Value "${{ secrets.KUBECONFIG_DATA }}"
 
     # Step 6: Deploy to Kubernetes
     - name: Deploy to Kubernetes
-      shell: pwsh
+      shell: powershell
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
