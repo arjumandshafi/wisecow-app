@@ -27,13 +27,13 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
 
-    # Step 4: Install kubectl (Windows)
+    # Step 4: Install kubectl (no need for admin rights)
     - name: Install kubectl
       shell: powershell
       run: |
         Invoke-WebRequest -Uri https://dl.k8s.io/release/v1.29.0/bin/windows/amd64/kubectl.exe -OutFile kubectl.exe
-        Move-Item -Path kubectl.exe -Destination "C:\Windows\System32\kubectl.exe" -Force
-        kubectl version --client
+        $env:PATH += ";$PWD"
+        .\kubectl.exe version --client
 
     # Step 5: Configure kubeconfig (decode base64 secret)
     - name: Configure kubeconfig
@@ -53,12 +53,12 @@ jobs:
         Set-Content -Path "$kubeDir\config" -Value $decoded -Encoding utf8
 
         # Verify kubeconfig works
-        kubectl config get-contexts
+        .\kubectl.exe config get-contexts
 
     # Step 6: Deploy to Kubernetes
     - name: Deploy to Kubernetes
       shell: powershell
       run: |
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        kubectl apply -f k8s/ingress.yaml
+        .\kubectl.exe apply -f k8s/deployment.yaml
+        .\kubectl.exe apply -f k8s/service.yaml
+        .\kubectl.exe apply -f k8s/ingress.yaml
