@@ -3,11 +3,11 @@ name: CI/CD for Wisecow
 on:
   push:
     branches:
-      - main   # Trigger when pushing to main
+      - main
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted   # Your Windows self-hosted runner
+    runs-on: self-hosted
 
     steps:
       # Step 1: Checkout repo
@@ -27,7 +27,7 @@ jobs:
           docker build -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
 
-      # Step 4: Install kubectl (no admin needed)
+      # Step 4: Install kubectl
       - name: Install kubectl
         shell: powershell
         run: |
@@ -35,51 +35,51 @@ jobs:
           $env:PATH += ";$PWD"
           .\kubectl.exe version --client
 
-      # Step 5: Configure kubeconfig (decode base64 secret)
+      # Step 5: Configure kubeconfig
       - name: Configure kubeconfig
         shell: powershell
         run: |
           $b64 = "${{ secrets.KUBECONFIG_DATA }}" -replace "`r`n","" -replace "\s",""
           $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
-
           $kubeDir = "$env:USERPROFILE\.kube"
           if (-Not (Test-Path $kubeDir)) { New-Item -ItemType Directory -Force -Path $kubeDir }
-
           Set-Content -Path "$kubeDir\config" -Value $decoded -Encoding utf8
-
           .\kubectl.exe config get-contexts
 
       # Step 6: Deploy to Kubernetes
       - name: Deploy to Kubernetes
         shell: powershell
         run: |
-          Write-Host "Applying Deployment..."
-          .\kubectl.exe apply -f .\k8s\deployment.yaml
+          $namespace = "default"
 
-          # Wait a few seconds to ensure pods are created
+          Write-Host "Checking k8s folder contents..."
+          dir .\k8s\
+
+          Write-Host "Applying Deployment..."
+          .\kubectl.exe apply -f .\k8s\deployment.yaml -n $namespace
+
           Start-Sleep -Seconds 5
 
-          # Delete existing service if exists to allow NodePort update
+          # Delete existing service if it exists
           try {
-              .\kubectl.exe get svc wisecow-service -ErrorAction Stop
+              .\kubectl.exe get svc wisecow-service -n $namespace -ErrorAction Stop
               Write-Host "Service exists. Deleting..."
-              .\kubectl.exe delete svc wisecow-service
+              .\kubectl.exe delete svc wisecow-service -n $namespace
           } catch {
               Write-Host "Service does not exist. Proceeding..."
           }
 
-          # Apply NodePort Service
+          # Apply NodePort service
           Write-Host "Applying Service..."
-          $applyOutput = .\kubectl.exe apply -f .\k8s/service.yaml
+          $applyOutput = .\kubectl.exe apply -f .\k8s\service.yaml -n $namespace
           Write-Host $applyOutput
 
-          # Wait a few seconds for Kubernetes to register the service
           Start-Sleep -Seconds 5
 
           # Verify service
           Write-Host "Current Services:"
-          .\kubectl.exe get svc -o wide
+          .\kubectl.exe get svc -n $namespace -o wide
 
           # Apply Ingress
           Write-Host "Applying Ingress..."
-          .\kubectl.exe apply -f .\k8s/ingress.yaml
+          .\kubectl.exe apply -f .\k8s\ingress.yaml -n $namespace
