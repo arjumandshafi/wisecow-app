@@ -56,8 +56,16 @@ jobs:
         # Apply Deployment
         .\kubectl.exe apply -f k8s/deployment.yaml
 
-        # Check if Service exists
-        $svcExists = .\kubectl.exe get svc wisecow-service -o name 2>$null
+        # Check if Service exists safely
+        $svcExists = $false
+        try {
+            $output = .\kubectl.exe get svc wisecow-service -o name -ErrorAction Stop
+            if ($output) { $svcExists = $true }
+        } catch {
+            Write-Host "Service does not exist yet. Proceeding to apply..."
+        }
+
+        # Delete existing service if found
         if ($svcExists) {
             Write-Host "Service exists. Deleting before applying new NodePort service..."
             .\kubectl.exe delete svc wisecow-service
