@@ -53,6 +53,18 @@ jobs:
     - name: Deploy to Kubernetes
       shell: powershell
       run: |
+        # Apply Deployment
         .\kubectl.exe apply -f k8s/deployment.yaml
+
+        # Check if Service exists
+        $svcExists = .\kubectl.exe get svc wisecow-service -o name 2>$null
+        if ($svcExists) {
+            Write-Host "Service exists. Deleting before applying new NodePort service..."
+            .\kubectl.exe delete svc wisecow-service
+        }
+
+        # Apply Service (NodePort)
         .\kubectl.exe apply -f k8s/service.yaml
+
+        # Apply Ingress
         .\kubectl.exe apply -f k8s/ingress.yaml
