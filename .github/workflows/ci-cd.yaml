@@ -27,7 +27,7 @@ jobs:
         docker build -t ${{ secrets.DOCKER_USERNAME }}/wisecow:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/wisecow:latest
 
-    # Step 4: Install kubectl (no need for admin rights)
+    # Step 4: Install kubectl (no admin needed)
     - name: Install kubectl
       shell: powershell
       run: |
@@ -39,20 +39,14 @@ jobs:
     - name: Configure kubeconfig
       shell: powershell
       run: |
-        # Read GitHub Secret (base64 kubeconfig)
         $b64 = "${{ secrets.KUBECONFIG_DATA }}" -replace "`r`n","" -replace "\s",""
         $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
-        
-        # Ensure .kube directory exists
-        $kubeDir = "$env:USERPROFILE\.kube"
-        if (-Not (Test-Path $kubeDir)) {
-          New-Item -ItemType Directory -Force -Path $kubeDir
-        }
 
-        # Write decoded kubeconfig file
+        $kubeDir = "$env:USERPROFILE\.kube"
+        if (-Not (Test-Path $kubeDir)) { New-Item -ItemType Directory -Force -Path $kubeDir }
+
         Set-Content -Path "$kubeDir\config" -Value $decoded -Encoding utf8
 
-        # Verify kubeconfig works
         .\kubectl.exe config get-contexts
 
     # Step 6: Deploy to Kubernetes
