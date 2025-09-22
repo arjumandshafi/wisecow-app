@@ -1,0 +1,22 @@
+# ksp-wisecow.yaml
+apiVersion: security.kubearmor.com/v1
+kind: KubeArmorPolicy
+metadata:
+  name: wisecow-zero-trust
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: wisecow
+  file:
+    matchPaths:
+      - path: /etc/passwd
+        action: Block
+        severity: 5
+        message: "Blocked access to passwd"
+  process:
+    matchPaths:
+      - path: /bin/sh
+        action: Block
+        severity: 5
+        message: "Blocked shell access"
