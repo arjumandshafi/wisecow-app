@@ -1,0 +1,19 @@
+
+===== Web Server Log Analysis Report =====
+Total Requests: 4
+Total 404 Errors: 1
+
+--- Status Code Summary ---
+200: 3
+404: 1
+
+--- Top 10 Requested Pages ---
+/: 2
+/icons/ubuntu-logo.png: 1
+/favicon.ico: 1
+
+--- Top 10 IP Addresses ---
+49.204.16.184: 3
+64.62.156.38: 1
+==========================================
+

@@ -1,0 +1,30 @@
+/bin/sh: 1: /home/ubuntu/system-health-monitor/system_health_monitor.sh: not found
+/bin/sh: 1: /home/ubuntu/system-health-monitor/system_health_monitor.sh: Permission denied
+Sat Sep 20 05:48:50 UTC 2025 - CPU usage normal: 9.1%
+Sat Sep 20 05:48:50 UTC 2025 - Memory usage normal: 35.1786%
+Sat Sep 20 05:48:50 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:48:50 UTC 2025 - Process count normal: 107
+Sat Sep 20 05:49:01 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:49:01 UTC 2025 - Memory usage normal: 35.177%
+Sat Sep 20 05:49:01 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:49:01 UTC 2025 - Process count normal: 109
+Sat Sep 20 05:50:02 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:50:02 UTC 2025 - Memory usage normal: 35.1965%
+Sat Sep 20 05:50:02 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:50:02 UTC 2025 - Process count normal: 115
+Sat Sep 20 05:51:01 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:51:01 UTC 2025 - Memory usage normal: 34.4698%
+Sat Sep 20 05:51:01 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:51:01 UTC 2025 - Process count normal: 112
+Sat Sep 20 05:52:01 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:52:01 UTC 2025 - Memory usage normal: 35.7298%
+Sat Sep 20 05:52:01 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:52:01 UTC 2025 - Process count normal: 110
+Sat Sep 20 05:53:01 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:53:01 UTC 2025 - Memory usage normal: 34.1859%
+Sat Sep 20 05:53:01 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:53:01 UTC 2025 - Process count normal: 108
+Sat Sep 20 05:54:02 UTC 2025 - CPU usage normal: 0%
+Sat Sep 20 05:54:02 UTC 2025 - Memory usage normal: 35.8004%
+Sat Sep 20 05:54:02 UTC 2025 - Disk usage normal: 30%
+Sat Sep 20 05:54:02 UTC 2025 - Process count normal: 111
