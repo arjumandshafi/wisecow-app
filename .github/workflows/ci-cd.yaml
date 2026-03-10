@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout repo
@@ -29,11 +29,11 @@ jobs:
 
       # Step 4: Install kubectl
       - name: Install kubectl
-        shell: powershell
-        run: |
-          Invoke-WebRequest -Uri https://dl.k8s.io/release/v1.29.0/bin/windows/amd64/kubectl.exe -OutFile kubectl.exe
-          $env:PATH += ";$PWD"
-          .\kubectl.exe version --client
+      - run: |
+         curl -LO "https://dl.k8s.io/release/v1.29.0/bin/linux/amd64/kubectl"
+         chmod +x kubectl
+         sudo mv kubectl /usr/local/bin/
+         kubectl version --client
 
       # Step 5: Configure kubeconfig
       - name: Configure kubeconfig
