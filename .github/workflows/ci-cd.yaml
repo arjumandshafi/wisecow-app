@@ -38,15 +38,14 @@ jobs:
 
       # Step 5: Configure kubeconfig
       - name: Configure kubeconfig
-        shell: powershell
+        shell: bash
         run: |
-          $b64 = "${{ secrets.KUBECONFIG_DATA }}" -replace "`r`n","" -replace "\s",""
-          $decoded = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($b64))
-          $kubeDir = "$env:USERPROFILE\.kube"
-          if (-Not (Test-Path $kubeDir)) { New-Item -ItemType Directory -Force -Path $kubeDir }
-          Set-Content -Path "$kubeDir\config" -Value $decoded -Encoding utf8
-          .\kubectl.exe config get-contexts
-
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > kubeconfig
+          mkdir -p $HOME/.kube
+          mv kubeconfig $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+          kubectl config get-contexts
+          
       # Step 6: Deploy to Kubernetes
       - name: Deploy to Kubernetes
         shell: powershell
