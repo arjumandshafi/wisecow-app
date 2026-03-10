@@ -47,39 +47,37 @@ jobs:
           kubectl config get-contexts
           
       # Step 6: Deploy to Kubernetes
-      - name: Deploy to Kubernetes
-        shell: powershell
-        run: |
-          $namespace = "default"
+      -  name: Deploy to Kubernetes
+         shell: bash
+         run: |
+           NAMESPACE="default"
 
-          Write-Host "Checking k8s folder contents..."
-          dir .\k8s\
+           echo "Checking k8s folder contents..."
+           ls k8s/
 
-          Write-Host "Applying Deployment..."
-          .\kubectl.exe apply -f .\k8s\deployment.yaml -n $namespace
+           echo "Applying Deployment..."
+           kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
 
-          Start-Sleep -Seconds 5
+           sleep 5
 
-          # Delete existing service if it exists
-          try {
-              .\kubectl.exe get svc wisecow-service -n $namespace -ErrorAction Stop
-              Write-Host "Service exists. Deleting..."
-              .\kubectl.exe delete svc wisecow-service -n $namespace
-          } catch {
-              Write-Host "Service does not exist. Proceeding..."
-          }
+           # Delete existing service if it exists
+           if kubectl get svc wisecow-service -n $NAMESPACE > /dev/null 2>&1; then
+           echo "Service exists. Deleting..."
+           kubectl delete svc wisecow-service -n $NAMESPACE
+           else
+           echo "Service does not exist. Proceeding..."
+           fi
 
-          # Apply NodePort service
-          Write-Host "Applying Service..."
-          $applyOutput = .\kubectl.exe apply -f .\k8s\service.yaml -n $namespace
-          Write-Host $applyOutput
+           # Apply NodePort service
+           echo "Applying Service..."
+           kubectl apply -f k8s/service.yaml -n $NAMESPACE
 
-          Start-Sleep -Seconds 5
+           sleep 5
 
-          # Verify service
-          Write-Host "Current Services:"
-          .\kubectl.exe get svc -n $namespace -o wide
+           # Verify service
+           echo "Current Services:"
+           kubectl get svc -n $NAMESPACE -o wide
 
-          # Apply Ingress
-          Write-Host "Applying Ingress..."
-          .\kubectl.exe apply -f .\k8s\ingress.yaml -n $namespace
+           # Apply Ingress
+           echo "Applying Ingress..."
+           kubectl apply -f k8s/ingress.yaml -n $NAMESPACE
